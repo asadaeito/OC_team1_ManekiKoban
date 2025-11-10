@@ -2,7 +2,7 @@
 #include "Level3DRender/LevelRender.h"
 
 class Player;
-
+class BackGround;
 class Game : public IGameObject
 {
 public:
@@ -16,5 +16,6 @@ private:
 	ModelRender m_modelRender;
 	Vector3 m_pos;
 	Player* m_player = nullptr;
+	BackGround* m_backGround = nullptr;
 };
 
