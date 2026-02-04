@@ -1,41 +1,62 @@
-#pragma once
+﻿#pragma once
 class Player :public IGameObject
 {
 public:
 	Player();
 	~Player();
-
-	bool Start();
-
-	void Update();
-
+public:
+	bool Start()override;
+	void Update()override;
+	void Render(RenderContext& rc)override;
+public:
+	/*移動*/
 	void Move();
-
+	/*回転*/
 	void Rotation();
-
-	void Render(RenderContext& rc);
-
+	/*ステート*/	
 	void ManageState();
-
+	/*アニメーション*/
 	void PlayAnimation();
+	/*リスポーン*/
+	void Respawn();
+	/*点滅*/
+	void Flash();
+public:
+	/** 体力のゲッター */
+	const uint8_t GetHP() const { return m_currentHp; }
+	/** キャラクターコントローラーのゲッター */
+	CharacterController& GetCharacterController() { return m_characterController; }
+	//メンバ関数
+	Vector3 m_position;//座標
 
-	//�����o�֐�
+	
+	uint8_t m_currentHp;//プレイヤーの体力
+	static constexpr int Max_HP = 3;
 private:
-	int m_playerState = 0;//�v���C���[�X�e�[�g
+	int m_playerState = 0;//プレイヤーステート
+	int m_jumpCount = 0;
+	int m_maxjumpCount = 1;//最大ジャンプ回数
+
+	bool InvincibleJuge = false;//無敵か無敵じゃないかのフラグ
+	float InvincibleTime = 3.0f;//無敵時間
+
+public:
+	//点滅用
+	float m_blinkTimer = 0.0f;
+	float m_blinkInterval = 0.1f;//点滅間隔
+	bool m_isVisible = true;
+	//Vector3 m_respawn;
 	ModelRender m_modelRender;
 
+	Vector3 m_moveSpeed = Vector3::Zero;//移動処理
 
-	Vector3 m_position;//���W
+	Vector3 m_respawn;//リスポーン
 
-	Vector3 m_moveSpeed = Vector3::Zero;//�ړ�����
+	Quaternion m_rot;//回転処理
 
-	Vector3 m_respawn;//���X�|�[��
-
-	Quaternion m_rot;//��]����
-
-	CharacterController m_characterController;//�����蔻��
+	CharacterController m_characterController;//当たり判定
 	
-	//�A�j���[�V����
+	//アニメーション
 	enum EnPlayAnimation
 	{
 		enAnimationClip_Idle,

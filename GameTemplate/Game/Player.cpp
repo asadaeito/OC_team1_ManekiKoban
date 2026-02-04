@@ -1,9 +1,13 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Player.h"
 
-Player::Player()
+namespace
 {
-	//ƒAƒjƒ[ƒVƒ‡ƒ“ƒNƒŠƒbƒv‚ğ“Ç‚İ‚Ş
+	const uint8_t LIFE_MAX = 3;
+}
+Player::Player():m_currentHp(LIFE_MAX)
+{
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¯ãƒªãƒƒãƒ—ã‚’èª­ã¿è¾¼ã‚€
 	animationClips[enAnimationClip_Idle].Load("Assets/animData/idle.tka");
 	animationClips[enAnimationClip_Idle].SetLoopFlag(true);
 	animationClips[enAnimationClip_Walk].Load("Assets/animData/walk.tka");
@@ -13,11 +17,11 @@ Player::Player()
 	animationClips[enAnimationClip_Run].Load("Assets/animData/run.tka");
 	animationClips[enAnimationClip_Run].SetLoopFlag(true);
 	m_modelRender.Init("Assets/modelData/unityChan.tkm", animationClips, enAnimationClip_Num, enModelUpAxisY);
-	m_characterController.Init(25.0f, 75.0f, m_position);
+	m_characterController.Init(30.0f, 75.0f, m_position);
 	
 }
 
-Player::~Player()
+Player::~Player() 
 {
 
 }
@@ -26,48 +30,56 @@ Player::~Player()
 
 bool Player:: Start()
 {
+	m_position = Vector3(0.0f, 0.0f, 800.0f);
+	m_characterController.SetPosition(m_position);
+	m_modelRender.SetPosition(m_position);
+	m_rot.SetRotationDegY(180.0f);
+	m_modelRender.SetRotation(m_rot);
+
+	m_respawn = m_position;
 	return true;
 }
 
 void Player::Update()
 {
-	//ˆÚ“®ˆ—
+	/*ç§»å‹•*/
 	Move();
-	//‰ñ“]ˆ—
+	/*å›è»¢*/
 	Rotation();
-	//ƒXƒe[ƒgŠÇ—
+	/*ã‚¹ãƒ†ãƒ¼ãƒˆ*/
 	ManageState();
-	//ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+	/*ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³*/
 	PlayAnimation();
-
-
-
+	/*ãƒªã‚¹ãƒãƒ¼ãƒ³*/
+	Respawn();
+	/*ç‚¹æ»…*/
+	Flash();
 	m_modelRender.Update();
 }
 
 
 void Player::Move()
 {
-	//xz‚Ì“ü—Í—Ê‚ğ0.0f‚É‚·‚é
+	//xzã®å…¥åŠ›é‡ã‚’0.0fã«ã™ã‚‹
 	m_moveSpeed.x = 0.0f;
 	m_moveSpeed.z = 0.0f;
 
-	//¶ƒXƒeƒBƒbƒN‚Ì“ü—Í—Ê‚ğæ“¾
+	//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›é‡ã‚’å–å¾—
 	Vector3 stickL;
-	stickL.x = g_pad[0]->GetLStickXF();//x²‚ÌˆÚ“®
-	stickL.y = g_pad[0]->GetLStickYF();//y²‚ÌˆÚ“®
-	//ˆÚ“®‘¬“x‚ÉƒXƒeƒBƒbƒN‚Ì“ü—Í—Ê‚ğæ“¾
+	stickL.x = g_pad[0]->GetLStickXF();//xè»¸ã®ç§»å‹•
+	stickL.y = g_pad[0]->GetLStickYF();//yè»¸ã®ç§»å‹•
+	//ç§»å‹•é€Ÿåº¦ã«ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›é‡ã‚’å–å¾—
 	m_moveSpeed.x += stickL.x * 120.0f;
 	m_moveSpeed.z += stickL.y * 120.0f;
 
-	//ƒJƒƒ‰‚Ì‘O•ûŒü‚Æ‰EƒxƒNƒgƒ‹‚ğ‚Á‚Ä‚­‚éB
+	//ã‚«ãƒ¡ãƒ©ã®å‰æ–¹å‘ã¨å³ãƒ™ã‚¯ãƒˆãƒ«ã‚’æŒã£ã¦ãã‚‹ã€‚
 	Vector3 forward = g_camera3D->GetForward();
 	Vector3 right = g_camera3D->GetRight();
 
 	forward.y = 0.0f;
 	right.y = 0.0f;
 
-	//³‹K‰»
+	//æ­£è¦åŒ–
 	right.y = 0.0f;
 	forward.y = 0.0f;
 	forward.Normalize();
@@ -75,49 +87,63 @@ void Player::Move()
 
 
 
-	//“ü—Í—Ê‚ğ”½‰f(TPS•û®)
+	//å…¥åŠ›é‡ã‚’åæ˜ (TPSæ–¹å¼)
 	Vector3 moveDir = forward * stickL.y * 120.0f + right * stickL.x * 120.0f;
 	m_moveSpeed.x = moveDir.x;
 	m_moveSpeed.z = moveDir.z;
 
-	//¶ƒXƒeƒBƒbƒN‚Ì“ü—Í—Ê‚Æ120.0f‚ğæZ‚·‚é
+	//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å…¥åŠ›é‡ã¨120.0fã‚’ä¹—ç®—ã™ã‚‹
 	right *= stickL.x * 120.0f;
 	forward *= stickL.y * 120.0f;
 
-	//ˆÚ“®‘¬“x‚Éã‹L‚ÅŒvZ‚µ‚½ƒxƒNƒgƒ‹‚ğ‰ÁZ
+	//ç§»å‹•é€Ÿåº¦ã«ä¸Šè¨˜ã§è¨ˆç®—ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’åŠ ç®—
 	m_moveSpeed += right + forward;
 
 
-
+	//if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
+	
 	if (m_characterController.IsOnGround())
 	{
 		m_moveSpeed.y = 0.0f;
 
 		if (g_pad[0]->IsPress(enButtonB))
 		{
-			//ƒ_ƒbƒVƒ…ˆ—
+			//ãƒ€ãƒƒã‚·ãƒ¥å‡¦ç†
 			m_moveSpeed.x *= 2.0f;
 			m_moveSpeed.z *= 2.0f;
 
 		}
 
-		if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
+
+		if (g_pad[0]->IsTrigger(enButtonA))
 		{
-			if (g_pad[0]->IsTrigger(enButtonA))
-			{
-				m_moveSpeed.y = 200.0f;
-				//m_moveSpeed.y -= 4.0 * 2.0f;
-			}
+			m_moveSpeed.y = 750.0f;
+			//m_moveSpeed.y -= 4.0 * 2.0f;
 		}
-		
 	}
-	else
+		else
+		{
+			//é‡åŠ›å‡¦ç†
+			m_moveSpeed.y -= 4.0 * 4.0f;
+		}
+
+
+	//äºŒæ®µã‚¸ãƒ£ãƒ³ãƒ—å‡¦ç†
+	if (g_pad[0]->IsTrigger(enButtonA))
 	{
-		//d—Íˆ—
-		m_moveSpeed.y -= 4.0 * 2.0f;
+		if (m_jumpCount < m_maxjumpCount)
+		{
+			m_moveSpeed.y = 750.0f;
+			m_jumpCount++;
+		}
+	}
+	if (m_characterController.IsOnGround())
+	{
+		m_jumpCount = 0;
 	}
 
-	//ƒvƒŒƒCƒ„[‚ğ“®‚­‚æ‚¤‚É‚·‚éB
+	
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å‹•ãã‚ˆã†ã«ã™ã‚‹ã€‚
 	m_position = m_characterController.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	m_modelRender.SetPosition(m_position);
 
@@ -125,12 +151,15 @@ void Player::Move()
 
 void Player::Rotation()
 {
+	
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
 	{
-		//ƒLƒƒƒ‰ƒNƒ^[‚Ì•ûŒü‚ğ•ÏŠ·
+		//ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®æ–¹å‘ã‚’å¤‰æ›
 		m_rot.SetRotationYFromDirectionXZ(m_moveSpeed);
 		m_modelRender.SetRotation(m_rot);
 	}
+
+	
 }
 
 void Player::ManageState()
@@ -143,7 +172,7 @@ void Player::ManageState()
 
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
 	{
-		//ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚½‚ç
+		//ãƒ€ãƒƒã‚·ãƒ¥ã—ã¦ã„ãŸã‚‰
 		if (g_pad[0]->IsPress(enButtonB))
 		{
 			m_playerState = 3;
@@ -151,17 +180,67 @@ void Player::ManageState()
 
 		else
 		{
-			//ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚È‚©‚Á‚½‚ç
+			//ãƒ€ãƒƒã‚·ãƒ¥ã—ã¦ã„ãªã‹ã£ãŸã‚‰
 			m_playerState = 1;
 		}
 	}
 	else
 	{
-		//‰½‚Ì“ü—Í‚à‚È‚©‚Á‚½‚ç
+		//ä½•ã®å…¥åŠ›ã‚‚ãªã‹ã£ãŸã‚‰
 		m_playerState = 0;
 
 	}
 
+}
+
+void Player::Respawn()
+{
+	if (m_position.y <= -1000.0f)
+	{
+		m_rot.SetRotationDegY(180.0f);
+		m_modelRender.SetRotation(m_rot);
+		m_position = m_respawn;
+		m_moveSpeed = Vector3::Zero;
+		m_characterController.SetPosition(m_position);
+		//m_modelRender.SetPosition(m_position);
+		m_currentHp--;
+		//ç„¡æ•µæ™‚é–“å‡¦ç†
+		InvincibleJuge = true;
+		InvincibleTime = 3.0f;
+		/*NOTE*/
+		//ã“ã‚Œã¯OCã®å•é¡Œç‚¹ã§ä½¿ç”¨ã™ã‚‹ã®ã§æ¶ˆã•ãªã„ã“ã¨
+		//m_currentHp -= 3;
+		
+	}
+}
+
+
+
+void Player::Flash()
+{
+	//ç„¡æ•µæ™‚é–“å‡¦ç†
+	if (InvincibleJuge)
+	{
+		//æ™‚é–“ã‚’æ¸›ã‚‰ã™å‡¦ç†
+		float dt = g_gameTime->GetFrameDeltaTime();
+		InvincibleTime -= dt;
+		//ç‚¹æ»…ã‚¿ã‚¤ãƒãƒ¼
+		m_blinkTimer += dt;
+		if (m_blinkTimer >= m_blinkInterval)
+		{
+			m_blinkTimer -= m_blinkInterval;//0ã«ã—ãªã„ã‚ˆã†ã«ã™ã‚‹
+			m_isVisible = !m_isVisible;//è¡¨ç¤ºåˆ‡æ›¿
+		}
+
+		//ç„¡æ•µæ™‚é–“ãŒçµ‚ã‚ã£ãŸã‚‰ç„¡æ•µè§£é™¤
+		if (InvincibleTime <= 0.0f)
+		{
+			InvincibleJuge = false;
+			InvincibleTime = 0.0f;
+			m_blinkTimer = 0.0f;
+			m_isVisible = true;
+		}
+	}
 }
 
 void Player::PlayAnimation()
@@ -187,5 +266,10 @@ void Player::PlayAnimation()
 
 void Player::Render(RenderContext& rc)
 {
-	m_modelRender.Draw(rc);
+
+	if (m_isVisible)
+	{
+		m_modelRender.Draw(rc);
+	}
+	
 }

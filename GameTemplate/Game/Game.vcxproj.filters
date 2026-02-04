@@ -14,6 +14,15 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="BackGround.cpp" />
+    <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="kobann.cpp" />
+    <ClCompile Include="Shrine.cpp" />
+    <ClCompile Include="HealthUI.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="kobannUI.cpp" />
+    <ClCompile Include="Title.cpp" />
+    <ClCompile Include="GameClear.cpp" />
+    <ClCompile Include="GameOver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -23,5 +32,18 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="BackGround.h" />
+    <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="kobann.h" />
+    <ClInclude Include="Shrine.h" />
+    <ClInclude Include="HealthUI.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="kobannUI.h" />
+    <ClInclude Include="Title.h" />
+    <ClInclude Include="GameClear.h" />
+    <ClInclude Include="GameOver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc" />
   </ItemGroup>
 </Project>
