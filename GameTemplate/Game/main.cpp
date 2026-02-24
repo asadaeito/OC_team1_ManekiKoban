@@ -3,7 +3,7 @@
 #include<InitGUID.h>
 #include<dxgidebug.h>
 #include "Game.h"
-#include"Title.h"
+#include"Title/Title.h"
 
 void ReportLiveObjects()
 {

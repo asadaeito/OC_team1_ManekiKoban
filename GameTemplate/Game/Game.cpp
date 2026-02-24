@@ -1,14 +1,18 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
-#include "Player.h"
-#include"BackGround.h"
-#include"GameCamera.h"
-#include"kobann.h"
-#include"Shrine.h"
-#include"HealthUI.h"
-#include"Timer.h"
-#include"kobannUI.h"
-#include"GameOver.h"
+#include"sound/SoundEngine.h"
+#include "Player/Player.h"
+#include"BackGround/BackGround.h"
+#include"Camera/GameCamera.h"
+#include"kobann/kobann.h"
+#include"Shrine/Shrine.h"
+#include"UI/HealthUI.h"
+#include"UI/kobannUI.h"
+#include"Timer/Timer.h"
+#include"GameOver/GameOver.h"
+#include"GameClear/GameClear.h"
+#include"Item.h"
+#include"Item_Speed.h"
 
 namespace
 {
@@ -38,7 +42,12 @@ namespace
 	 DeleteGO(m_timer);
 	 //kobannのUIを削除
 	 DeleteGO(m_kobannUI);
-
+	 //BGMを削除
+	 DeleteGO(m_bgm);
+	 //Itemを削除
+	 DeleteGO(m_item);
+	 //Item_Speedを削除
+	 DeleteGO(m_itemSpeed);
 	 //foreachを使ってkobannを削除
 	 for (auto kobann : FindGOs<kobann>("kobann"))
 	 {
@@ -48,7 +57,9 @@ namespace
  }
 bool Game::Start()
 {
+	//ここでゲームを開始した時点で小判の数を0にリセット
 	kobann::Reset();
+	BGM();
 	InitSky();
 	m_player = NewGO<Player>(0,"player");
 	m_backGround = NewGO<BackGround>(0, "backGround");
@@ -57,6 +68,8 @@ bool Game::Start()
 	m_healthUI = NewGO<HealthUI>(0, "healthUI");
 	m_timer = NewGO<Timer>(0, "timer");
 	m_kobannUI = NewGO<kobannUI>(0, "kobannUI");
+	m_item = NewGO<Item>(0, "item");
+	m_itemSpeed = NewGO<Item_Speed>(0, "item_speed");
 
 
 	//小判をfor文で追加
@@ -77,31 +90,55 @@ bool Game::Start()
 
 void Game::Update()
 {
-
+	//ゲーム内にプレイヤーの現在位置を表示
 	if (m_player != nullptr)
 	{
 		wchar_t playertext[256];
-		swprintf_s(playertext, 256, L"プレイヤーのポジションx: %.0f y: %.0f z: %.0f", m_player->m_position.x, m_player->m_position.y, m_player->m_position.z);
+		swprintf_s(playertext, 256, L"プレイヤーのポジションx: %.0f y: %.0f z: %.0f", m_player->GetPosition().x, m_player->GetPosition().y, m_player->GetPosition().z);
 		m_playerPosFontRender.SetText(playertext);
 		m_playerPosFontRender.SetPosition({ -200.0f,-100.0f,0.0f });
 		m_playerPosFontRender.SetScale(1.0f);
 		m_playerPosFontRender.SetColor(g_vec4White);
 		m_modelRender.Update();
 	}
+	//ゲームオーバー処理
 	Death();
-
+	//ゲームクリア処理
+	Clear();
 }
 
 void Game::Death()
 {
+	//bool型のisDeathがtrueなら即時リターンをしてこの下の処理を止める
 	if (isDeath)return;
 
 	if (m_player->GetHP() == 0)
 	{
 		isDeath = true;
-		NewGO<GameOver>(0, "gameover");
+		m_gameOver = NewGO<GameOver>(0, "gameover");
 		DeleteGO(this);
 	}
+}
+
+/*NOTE:OCの問題点でゲームクリアがないがあるのでここを消しておく*/
+void Game::Clear()
+{
+	//shrineのゴーストオブジェクトに小判を６個持った状態で当たるとゲームクリアを出してゲームを削除
+	if (m_shrine->m_isGoal == true)
+	{
+		m_gameClear = NewGO<GameClear>(0, "gameclear");
+		DeleteGO(this);
+	}
+}
+
+void Game::BGM()
+{
+	g_soundEngine->ResistWaveFileBank(0, "Assets/BGM/GameBGM.wav");
+
+	m_bgm = NewGO<SoundSource>(0);
+	//WaveFileBankから登録されたwaveファイルを持ってくる
+	m_bgm->Init(0);
+	m_bgm->Play(true);
 }
 void Game::InitSky()
 {

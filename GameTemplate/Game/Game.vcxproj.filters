@@ -4,6 +4,36 @@
     <Filter Include="system">
       <UniqueIdentifier>{22dd8095-74f9-46df-81a1-36675a040b1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="kobann">
+      <UniqueIdentifier>{dbd1ffbe-684d-43fb-8020-19e5e7ed9f33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5817a216-12bd-4f48-9442-6a860eea6e2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{b7bc153d-67f0-4c74-9643-ac85a065201d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Title">
+      <UniqueIdentifier>{b3750f90-fec3-4b1a-abe9-cd0afd791f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameClear">
+      <UniqueIdentifier>{8574fa4f-6e94-4737-b745-ecef0873f356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameOver">
+      <UniqueIdentifier>{9f1e06cd-fae0-407d-9bf5-fdfd3f4fe195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shrine">
+      <UniqueIdentifier>{2f5f1c41-da90-4652-a316-05e18b8ada8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{35eff993-61a0-4625-894b-e1bfb1f4a3b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{67429081-d9a8-40a9-902d-55ea8b5531c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BackGround">
+      <UniqueIdentifier>{b1c6e382-66a0-47d4-a69c-a736326813bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -12,17 +42,41 @@
       <Filter>system</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="BackGround.cpp" />
-    <ClCompile Include="GameCamera.cpp" />
-    <ClCompile Include="kobann.cpp" />
-    <ClCompile Include="Shrine.cpp" />
-    <ClCompile Include="HealthUI.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="kobannUI.cpp" />
-    <ClCompile Include="Title.cpp" />
-    <ClCompile Include="GameClear.cpp" />
-    <ClCompile Include="GameOver.cpp" />
+    <ClCompile Include="kobann\kobann.cpp">
+      <Filter>kobann</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\kobannUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HealthUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera\GameCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Title\Title.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClear\GameClear.cpp">
+      <Filter>GameClear</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOver\GameOver.cpp">
+      <Filter>GameOver</Filter>
+    </ClCompile>
+    <ClCompile Include="Shrine\Shrine.cpp">
+      <Filter>Shrine</Filter>
+    </ClCompile>
+    <ClCompile Include="Player\Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer\Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="BackGround\BackGround.cpp">
+      <Filter>BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Item_Speed.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -30,18 +84,42 @@
       <Filter>system</Filter>
     </ClInclude>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="BackGround.h" />
-    <ClInclude Include="GameCamera.h" />
-    <ClInclude Include="kobann.h" />
-    <ClInclude Include="Shrine.h" />
-    <ClInclude Include="HealthUI.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="kobannUI.h" />
-    <ClInclude Include="Title.h" />
-    <ClInclude Include="GameClear.h" />
-    <ClInclude Include="GameOver.h" />
+    <ClInclude Include="kobann\kobann.h">
+      <Filter>kobann</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HealthUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\kobannUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera\GameCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\Title.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClear\GameClear.h">
+      <Filter>GameClear</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOver\GameOver.h">
+      <Filter>GameOver</Filter>
+    </ClInclude>
+    <ClInclude Include="Shrine\Shrine.h">
+      <Filter>Shrine</Filter>
+    </ClInclude>
+    <ClInclude Include="Player\Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer\Timer.h">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="BackGround\BackGround.h">
+      <Filter>BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="Item_Speed.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Game.rc" />

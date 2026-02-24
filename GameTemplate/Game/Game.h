@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Level3DRender/LevelRender.h"
+#include"sound/SoundSource.h"
 class Player;
 class BackGround;
 class GameCamera;
@@ -8,6 +9,10 @@ class Shrine;
 class HealthUI;
 class Timer;
 class kobannUI;
+class Item;
+class Item_Speed;
+class GameClear;
+class GameOver;
 class Game : public IGameObject
 {
 public:
@@ -21,6 +26,8 @@ public:
 public:
 	void InitSky();
 	void Death();
+	void Clear();
+	void BGM();
 private:
 	ModelRender m_modelRender;
 private:
@@ -35,6 +42,11 @@ private:
 	HealthUI* m_healthUI = nullptr;
 	Timer* m_timer = nullptr;
 	kobannUI* m_kobannUI = nullptr;
+	SoundSource* m_bgm = nullptr;
+	Item* m_item = nullptr;
+	Item_Speed* m_itemSpeed = nullptr;
+	GameClear* m_gameClear = nullptr;
+	GameOver* m_gameOver = nullptr;
 	//全てnullptrで初期化
 	kobann* m_kobann[6] = {};
 
